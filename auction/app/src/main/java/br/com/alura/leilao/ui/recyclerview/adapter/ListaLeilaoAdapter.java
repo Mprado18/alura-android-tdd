@@ -11,17 +11,20 @@ import android.widget.TextView;
 import java.util.List;
 
 import br.com.alura.leilao.R;
+import br.com.alura.leilao.formatter.FormatadorDeMoedas;
 import br.com.alura.leilao.model.Leilao;
 
 public class ListaLeilaoAdapter extends RecyclerView.Adapter<ListaLeilaoAdapter.ViewHolder> {
 
     private final List<Leilao> leiloes;
     private final Context context;
+    private final FormatadorDeMoedas formatadorDeMoedas;
     private OnItemClickListener onItemClickListener;
 
     public ListaLeilaoAdapter(Context context, List<Leilao> leiloes) {
         this.context = context;
         this.leiloes = leiloes;
+        this.formatadorDeMoedas = new FormatadorDeMoedas();
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -67,7 +70,7 @@ public class ListaLeilaoAdapter extends RecyclerView.Adapter<ListaLeilaoAdapter.
         void vincula(Leilao leilao) {
             this.leilao = leilao;
             descricao.setText(leilao.getDescricao());
-            maiorLance.setText(String.valueOf(leilao.getMaiorLance()));
+            maiorLance.setText(formatadorDeMoedas.formata(leilao.getMaiorLance()));
         }
 
     }
