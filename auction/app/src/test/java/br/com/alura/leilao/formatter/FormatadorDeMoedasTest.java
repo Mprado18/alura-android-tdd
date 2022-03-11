@@ -10,7 +10,7 @@ public class FormatadorDeMoedasTest {
 
     @Test
     public void deve_formatarParaMoeda_QuandoRecebeValorDouble() {
-        FormatadorDeMoedas formatador = new FormatadorDeMoedas();
+        FormatadorDeMoeda formatador = new FormatadorDeMoeda();
 
         String moedaFormatada = formatador.formata(200.0);
         assertThat(moedaFormatada, is(equalTo("R$ 200,00")));

@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class FormatadorDeMoedas {
+public class FormatadorDeMoeda {
 
     public String formata(double valor) {
         NumberFormat formatador = DecimalFormat

@@ -11,12 +11,12 @@ import br.com.alura.leilao.exception.MaximoCincoLancesPorUserException;
 
 public class Leilao implements Serializable {
 
+    private final long id;
     private final String descricao;
     private final List<Lance> lances;
-    private double maiorLance = 0.0;
-    private double menorLance = 0.0;
 
     public Leilao(String descricao) {
+        this.id = 0L;
         this.descricao = descricao;
         this.lances = new ArrayList<>();
     }
@@ -24,26 +24,14 @@ public class Leilao implements Serializable {
     public void propoe(Lance lance) {
         valida(lance);
         lances.add(lance);
-        double valorLance = lance.getValor();
-        if (defineMaiorEMenorLanceParaPrimeiroLance(valorLance)) return;
         Collections.sort(lances);
-        calculaMaiorLance(valorLance);
-    }
-
-    private boolean defineMaiorEMenorLanceParaPrimeiroLance(double valorLance) {
-        if (lances.size() == 1) {
-            maiorLance = valorLance;
-            menorLance = valorLance;
-            return true;
-        }
-        return false;
     }
 
     private void valida(Lance lance) {
         double valorLance = lance.getValor();
         if (lanceForMenorQueUltimo(valorLance))
             throw new LanceMenorQueUltimoLanceException();
-        if (!lances.isEmpty()) {
+        if (temLances()) {
             Usuario usuarioNovo = lance.getUsuario();
 
             if (usuarioForMesmoUltimoLance(usuarioNovo))
@@ -51,6 +39,10 @@ public class Leilao implements Serializable {
             if (usuarioFezCincoLances(usuarioNovo))
                 throw new MaximoCincoLancesPorUserException();
         }
+    }
+
+    private boolean temLances() {
+        return !lances.isEmpty();
     }
 
     private boolean usuarioFezCincoLances(Usuario usuarioNovo) {
@@ -69,23 +61,11 @@ public class Leilao implements Serializable {
 
     private boolean usuarioForMesmoUltimoLance(Usuario usuarioNovo) {
         Usuario ultimoUsuario = lances.get(0).getUsuario();
-        if (usuarioNovo.equals(ultimoUsuario)) {
-            return true;
-        }
-        return false;
+        return usuarioNovo.equals(ultimoUsuario);
     }
 
     private boolean lanceForMenorQueUltimo(double valorLance) {
-        if (maiorLance > valorLance) {
-            return true;
-        }
-        return false;
-    }
-
-    private void calculaMaiorLance(double valorLance) {
-        if (valorLance > maiorLance) {
-            maiorLance = valorLance;
-        }
+        return getMaiorLance() > valorLance;
     }
 
     public String getDescricao() {
@@ -93,11 +73,17 @@ public class Leilao implements Serializable {
     }
 
     public double getMaiorLance() {
-        return maiorLance;
+        if (lances.isEmpty()) {
+           return 0.0;
+        }
+        return lances.get(0).getValor();
     }
 
     public double getMenorLance() {
-        return menorLance;
+        if (lances.isEmpty()) {
+            return 0.0;
+        }
+        return lances.get(lances.size() - 1).getValor();
     }
 
     public List<Lance> tresMaioresLances() {
@@ -108,7 +94,25 @@ public class Leilao implements Serializable {
         return lances.subList(0, quantidadeMaximaLances);
     }
 
-    public int quantidadeDeLances() {
-        return lances.size();
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Leilao leilao = (Leilao) o;
+
+        if (id != leilao.id) return false;
+        return descricao != null ? descricao.equals(leilao.descricao) : leilao.descricao == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (descricao != null ? descricao.hashCode() : 0);
+        return result;
     }
 }

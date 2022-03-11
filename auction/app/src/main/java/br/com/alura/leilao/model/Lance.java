@@ -21,13 +21,7 @@ public class Lance implements Serializable, Comparable {
     @Override
     public int compareTo(@NonNull Object o) {
         Lance lance = (Lance) o;
-        if (valor > lance.getValor()) {
-            return -1;
-        }
-        if (valor < lance.getValor()) {
-            return 1;
-        }
-        return 0;
+        return Double.compare(lance.getValor(), valor);
     }
 
     public Usuario getUsuario() {
