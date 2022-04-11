@@ -10,7 +10,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LeilaoWebClient {
+public class LeilaoWebClient extends WebClient {
 
     private final LeilaoService service;
 
@@ -51,9 +51,4 @@ public class LeilaoWebClient {
             }
         });
     }
-
-    private boolean temDados(Response<List<Leilao>> response) {
-        return response.isSuccessful() && response.body() != null;
-    }
-
 }
