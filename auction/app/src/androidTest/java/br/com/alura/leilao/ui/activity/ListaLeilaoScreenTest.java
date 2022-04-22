@@ -6,23 +6,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static br.com.alura.leilao.matchers.ViewMatcher.apareceLeilaoNaPosicao;
 
 import android.content.Intent;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import br.com.alura.leilao.utils.BaseTestIntegration;
 import br.com.alura.leilao.R;
-import br.com.alura.leilao.api.retrofit.client.TesteWebClient;
 import br.com.alura.leilao.model.Leilao;
 
-public class ListaLeilaoScreenTest {
-
-    private static final String ERRO_FALHA_LIMPAZA_BD = "Banco de dados não foi limpo!";
-    private static final String ERRO_LEILAO_NAO_FOI_SALVO = "Leilão não foi salvo: ";
+public class ListaLeilaoScreenTest extends BaseTestIntegration {
 
     @Rule
     public ActivityTestRule<ListaLeilaoActivity> activity = new ActivityTestRule<>(
@@ -30,7 +27,6 @@ public class ListaLeilaoScreenTest {
             true,
             false
     );
-    private final TesteWebClient webClient = new TesteWebClient();
 
     @Before
     public void setup() throws IOException {
@@ -77,20 +73,30 @@ public class ListaLeilaoScreenTest {
                 ));
     }
 
-    private void limpaBancoDadosApi() throws IOException {
-        boolean bancoDeDadosNaoFoiLimpo = !webClient.limpaBancoDeDados();
-        if (bancoDeDadosNaoFoiLimpo) {
-            Assert.fail(ERRO_FALHA_LIMPAZA_BD);
-        }
-    }
+    @Test
+    public void deve_AparecerUltimoLeilao_QuandoCarregarDezLeiloesDaApi() throws IOException {
+        tentaSalvarLeilaoNaApi(
+                new Leilao("Console"),
+                new Leilao("Computador"),
+                new Leilao("TV"),
+                new Leilao("Carro"),
+                new Leilao("Cama"),
+                new Leilao("Apartamento"),
+                new Leilao("Smartphone"),
+                new Leilao("Notebook"),
+                new Leilao("Macbook"),
+                new Leilao("Harley Davidson")
+        );
 
-    private void tentaSalvarLeilaoNaApi(Leilao... leiloes) throws IOException {
-        for (Leilao leilao : leiloes) {
-            Leilao leilaoSalvo = webClient.salva(leilao);
-            if (leilaoSalvo == null) {
-                Assert.fail(ERRO_LEILAO_NAO_FOI_SALVO + leilao.getDescricao());
-            }
-        }
+        activity.launchActivity(new Intent());
+
+        onView(withId(R.id.lista_leilao_recyclerview))
+                .perform(RecyclerViewActions.scrollToPosition(9))
+                .check(matches(apareceLeilaoNaPosicao(
+                        9,
+                        "Harley Davidson",
+                        0.00)
+                ));
     }
 
 }

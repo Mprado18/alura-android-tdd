@@ -54,16 +54,14 @@ public class ViewMatcher {
 
             private boolean verificaMaiorLanceEsperado(View itemView) {
                 TextView itemMaiorLance = itemView.findViewById(R.id.item_leilao_maior_lance);
-                boolean temMaiorLanceEsperado = itemMaiorLance.getText().toString()
-                        .equals(valorFormatado);
-                return temMaiorLanceEsperado;
+                return itemMaiorLance.getText().toString()
+                        .equals(valorFormatado) && isDisplayed.matches(itemMaiorLance);
             }
 
             private boolean verificaDescricaoEsperada(View itemView) {
                 TextView itemDescricao = itemView.findViewById(R.id.item_leilao_descricao);
-                boolean temDescricaoEsperada = itemDescricao.getText().toString()
-                        .equals(descricaoEsperada);
-                return temDescricaoEsperada;
+                return itemDescricao.getText().toString()
+                        .equals(descricaoEsperada) && isDisplayed.matches(itemDescricao);
             }
         };
     }
